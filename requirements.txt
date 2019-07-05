@@ -8,3 +8,9 @@ boto3
 requests
 # For OpenAI GPT
 regex
+
+# Additions to run_classifier.sh
+#pip install --editable . # in repo root
+tensorboardX
+scipy
+sklearn
