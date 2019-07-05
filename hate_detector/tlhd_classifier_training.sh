@@ -4,7 +4,7 @@ export TASK_NAME=TLHD
 export DATA_DIR=/home/aallhorn/data
 export OUT_DIR=/home/aallhorn/output
 
-python run_classifier.py \
+python ../examples/run_classifier.py \
   --task_name $TASK_NAME \
   --data_dir $DATA_DIR \
   --output_dir $OUT_DIR/$TASK_NAME \
