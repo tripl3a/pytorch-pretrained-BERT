@@ -86,6 +86,27 @@ class DataProcessor(object):
                 lines.append(line)
             return lines
 
+class TlhdProcessor(DataProcessor):
+    """Transfer Learning for Hatespeech Detection Processor."""
+
+    def get_train_examples(self, data_dir):
+        """See base class."""
+        logger.info("LOOKING AT {}".format(os.path.join(data_dir, "train.tsv")))
+        return self._create_examples(
+            self._read_tsv(os.path.join(data_dir, "train.tsv")), "train")
+
+    def get_dev_examples(self, data_dir):
+        """See base class."""
+        return self._create_examples(
+            self._read_tsv(os.path.join(data_dir, "dev.tsv")), "dev")
+
+    def get_labels(self):
+        """See base class."""
+        return ["not-deleted", "troll", "duplicate", "general-violation", "contact-request",
+                "incomprehensible", "provocation", "custom", "platform-question", "chat-question",
+                "legal", "offense", "spam", "picture-missing", "personal-data"]
+
+
 
 class MrpcProcessor(DataProcessor):
     """Processor for the MRPC data set (GLUE version)."""
@@ -542,6 +563,8 @@ def compute_metrics(task_name, preds, labels):
         return {"acc": simple_accuracy(preds, labels)}
     elif task_name == "wnli":
         return {"acc": simple_accuracy(preds, labels)}
+    elif task_name == "tlhd":
+        return {"acc": simple_accuracy(preds, labels)}
     else:
         raise KeyError(task_name)
 
@@ -556,6 +579,7 @@ processors = {
     "qnli": QnliProcessor,
     "rte": RteProcessor,
     "wnli": WnliProcessor,
+    "tlhd" : TlhdProcessor,
 }
 
 output_modes = {
@@ -568,4 +592,5 @@ output_modes = {
     "qnli": "classification",
     "rte": "classification",
     "wnli": "classification",
+    "tlhd": "classification",
 }
