@@ -106,6 +106,18 @@ class TlhdProcessor(DataProcessor):
                 "incomprehensible", "provocation", "custom", "platform-question", "chat-question",
                 "legal", "offense", "spam", "picture-missing", "personal-data"]
 
+    def _create_examples(self, lines, set_type):
+        """Creates examples for the training and dev sets."""
+        examples = []
+        for (i, line) in enumerate(lines):
+            if i == 0:
+                continue
+            guid = "%s-%s" % (set_type, i)
+            text_a = line[1]
+            label = line[0]
+            examples.append(
+                InputExample(guid=guid, text_a=text_a, label=label))
+        return examples
 
 
 class MrpcProcessor(DataProcessor):
