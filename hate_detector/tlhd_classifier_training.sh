@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
 
-export WORK_DIR=/home/aallhorn
-export TASK_NAME=TLHD
-#export DATA_DIR=~/git-reps/transfer-learning-for-hatespeech-detection/data/modeling/gutefrage-q-del
-#export OUT_DIR=/tmp
+export WORK_DIR = $1
+export TASK_NAME = TLHD
 
 cd $WORK_DIR/code/pytorch-pretrained-BERT/hate_detector &&
 python ../examples/run_classifier.py \
