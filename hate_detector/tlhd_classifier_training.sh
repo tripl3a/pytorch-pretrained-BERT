@@ -10,7 +10,7 @@ python ../examples/run_classifier.py \
   --output_dir $WORK_DIR/output \
   --do_train \
   --do_eval \
-  --bert_model bert-base-german-cased \
+  --bert_model bert-base-multilingual-cased \
   --max_seq_length 128 \
   --train_batch_size 32 \
   --learning_rate 2e-5 \
