@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-export WORK_DIR = /home/aallhorn
-export TASK_NAME = TLHD
+export WORK_DIR=/home/aallhorn
+export TASK_NAME=TLHD
 
 cd $WORK_DIR/code/pytorch-pretrained-BERT/hate_detector &&
 python ../examples/run_classifier.py \
