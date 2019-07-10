@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 
+export WORK_DIR=/home/aallhorn
 export TASK_NAME=TLHD
 #export DATA_DIR=~/git-reps/transfer-learning-for-hatespeech-detection/data/modeling/gutefrage-q-del
 #export OUT_DIR=/tmp
-export DATA_DIR=/home/aallhorn/data
-export OUT_DIR=/home/aallhorn/output
 
+cd $WORK_DIR/code/pytorch-pretrained-BERT/hate_detector &&
 python ../examples/run_classifier.py \
   --task_name $TASK_NAME \
-  --data_dir $DATA_DIR \
-  --output_dir $OUT_DIR/$TASK_NAME \
+  --data_dir $WORK_DIR/data \
+  --output_dir $WORK_DIR/output \
   --do_train \
   --do_eval \
   --bert_model bert-base-german-cased \
