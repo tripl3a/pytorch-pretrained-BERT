@@ -13,6 +13,7 @@ export TASK_NAME=TLHD
 export BERT_BASE_DIR=$WORK_DIR/output
 export TRAINED_CLASSIFIER=$WORK_DIR/output/pytorch_model.bin
 
+cd $WORK_DIR/code/pytorch-pretrained-BERT/hate_detector &&
 python ../examples/run_classifier.py \
   --task_name=$TASK_NAME \
   --do_predict=true \
