@@ -16,10 +16,8 @@ export BERT_MODEL=$WORK_DIR/output/pytorch_model.bin
 cd $WORK_DIR/code/pytorch-pretrained-BERT/hate_detector &&
 python ../examples/run_classifier.py \
   --task_name=$TASK_NAME \
-  --do_predict=true \
+  --do_eval \
   --data_dir=$WORK_DIR/data \
-  --vocab_file=$BERT_BASE_DIR/vocab.txt \
-  --bert_config_file=$BERT_BASE_DIR/config.json \
   --bert_model=$BERT_MODEL \
   --max_seq_length=128 \
   --output_dir=$WORK_DIR/pred_output
