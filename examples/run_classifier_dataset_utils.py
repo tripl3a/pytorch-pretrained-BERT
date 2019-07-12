@@ -23,7 +23,7 @@ import os
 import sys
 
 from scipy.stats import pearsonr, spearmanr
-from sklearn.metrics import matthews_corrcoef, f1_score
+from sklearn.metrics import matthews_corrcoef, f1_score, classification_report
 
 logger = logging.getLogger(__name__)
 
@@ -99,6 +99,11 @@ class TlhdProcessor(DataProcessor):
         """See base class."""
         return self._create_examples(
             self._read_tsv(os.path.join(data_dir, "dev.tsv")), "dev")
+
+    def get_test_examples(self, data_dir):
+        """See base class."""
+        return self._create_examples(
+            self._read_tsv(os.path.join(data_dir, "test.tsv")), "dev")
 
     def get_labels(self):
         """See base class."""
@@ -543,6 +548,18 @@ def acc_and_f1(preds, labels):
     }
 
 
+def acc_f1_and_clf_rep(preds, labels):
+    acc = simple_accuracy(preds, labels)
+    f1 = f1_score(y_true=labels, y_pred=preds)
+    clf_rep = classification_report(y_true=labels, y_pred=preds)
+    return {
+        "acc": acc,
+        "f1": f1,
+        "acc_and_f1": (acc + f1) / 2,
+        "clf_rep": clf_rep
+    }
+
+
 def pearson_and_spearman(preds, labels):
     pearson_corr = pearsonr(preds, labels)[0]
     spearman_corr = spearmanr(preds, labels)[0]
@@ -576,7 +593,7 @@ def compute_metrics(task_name, preds, labels):
     elif task_name == "wnli":
         return {"acc": simple_accuracy(preds, labels)}
     elif task_name == "tlhd":
-        return acc_and_f1(preds, labels)
+        return acc_f1_and_clf_rep(preds, labels)
     else:
         raise KeyError(task_name)
 
