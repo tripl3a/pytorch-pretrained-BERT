@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
 
-export WORK_DIR=/tlhd/models/bert01
-export CODE_DIR=/home/arndt/git-reps/pytorch-pretrained-BERT
-export MODEL_DIR=/tlhd/models/bert01/output
+#export WORK_DIR=/tlhd/models/bert01
+#export MODEL_DIR=/tlhd/models/bert01/output
+#export CODE_DIR=~/git-reps/pytorch-pretrained-BERT
+
+export WORK_DIR=/home/aallhorn
+export MODEL_DIR=/home/aallhorn/output
+export CODE_DIR=/home/aallhorn/code/pytorch-pretrained-BERT
+
 export TASK_NAME=TLHD
 
 cd $CODE_DIR/hate_detector &&
