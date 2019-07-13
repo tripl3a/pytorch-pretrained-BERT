@@ -343,16 +343,23 @@ def main():
                 writer.write("%s = %s\n" % (key, str(result[key])))
 
         if args.do_export:
+            logger.info("***** Exporting predictions *****")
             # export data with predictions
             import pandas as pd
             df_results = pd.DataFrame({
-                "y_pred": preds,
-                "y_pred_name": [inv_label_map[label_id] for label_id in preds],
+                "y_true_name": [inv_label_map[label_id] for label_id in out_label_ids],
                 "y_true": out_label_ids,
-                "y_true_name": [inv_label_map[label_id] for label_id in out_label_ids]
+                "y_pred_name": [inv_label_map[label_id] for label_id in preds],
+                "y_pred": preds
             })
             output_preds_file = os.path.join(args.output_dir, "pred_results.csv")
             df_results.to_csv(path_or_buf=output_preds_file, index=False)
+
+            logger.info("Prediction results exported to %s", str(output_preds_file))
+
+            if isinstance(eval_sampler, SequentialSampler):
+                logger.info("SequentialSampler was used, "
+                            "so the prediction results may be joined with the input data on index.")
 
 
 if __name__ == "__main__":
