@@ -39,7 +39,8 @@ from pytorch_pretrained_bert.modeling import BertForSequenceClassification
 from pytorch_pretrained_bert.tokenization import BertTokenizer
 from pytorch_pretrained_bert.optimization import BertAdam, WarmupLinearSchedule
 
-from run_classifier_dataset_utils import processors, output_modes, convert_examples_to_features, compute_metrics
+from run_classifier_dataset_utils import processors, output_modes, convert_examples_to_features, compute_metrics, \
+    get_label_map
 
 if sys.version_info[0] == 2:
     import cPickle as pickle
@@ -96,6 +97,10 @@ def main():
     parser.add_argument("--do_eval",
                         action='store_true',
                         help="Whether to run eval on the dev set.")
+    parser.add_argument("--do_export",
+                        action='store_true',
+                        help="Whether to run export of the dev set with predictions. "
+                             "Only used when do_eval set to True.")
     parser.add_argument("--do_lower_case",
                         action='store_true',
                         help="Set this flag if you are using an uncased model.")
@@ -205,6 +210,7 @@ def main():
 
     label_list = processor.get_labels()
     num_labels = len(label_list)
+    label_map = get_label_map(label_list)
 
     # if args.local_rank not in [-1, 0]:
     #     torch.distributed.barrier()  # Make sure only the first process in distributed training will download model & vocab
@@ -238,7 +244,7 @@ def main():
         eval_examples = processor.get_dev_examples(args.data_dir)
         cached_eval_features_file = os.path.join(args.data_dir, 'dev_{0}_{1}_{2}'.format(
             #list(filter(None, args.bert_model.split('/'))).pop(),
-            "bert-base-multilingual-cased",
+            "bert-base-multilingual-cased", # TODO: don't pass a fixed value here
             str(args.max_seq_length),
             str(task_name)))
         try:
@@ -313,7 +319,15 @@ def main():
             preds = np.argmax(preds, axis=1)
         elif output_mode == "regression":
             preds = np.squeeze(preds)
-        result = compute_metrics(task_name, preds, out_label_ids)
+
+        inv_label_map = {v: k for k, v in label_map.items()}
+        distinct_out_label_ids = list(set(preds).union(set(out_label_ids)))
+        distinct_out_label_names = [""]*len(distinct_out_label_ids)
+        for idx, label_id in enumerate(distinct_out_label_ids):
+            distinct_out_label_names[idx] = inv_label_map[label_id]
+
+        result = compute_metrics(task_name, y_pred=preds, y_true=out_label_ids,
+                                 labels=distinct_out_label_ids, target_names=distinct_out_label_names)
 
         loss = tr_loss/global_step if args.do_train else None
 
@@ -328,6 +342,17 @@ def main():
                 logger.info("  %s = %s", key, str(result[key]))
                 writer.write("%s = %s\n" % (key, str(result[key])))
 
+        if args.do_export:
+            # export data with predictions
+            import pandas as pd
+            df_results = pd.DataFrame({
+                "y_pred": preds,
+                "y_pred_name": [inv_label_map[label_id] for label_id in preds],
+                "y_true": out_label_ids,
+                "y_true_name": [inv_label_map[label_id] for label_id in out_label_ids]
+            })
+            output_preds_file = os.path.join(args.output_dir, "pred_results.csv")
+            df_results.to_csv(path_or_buf=output_preds_file, index=False)
 
 if __name__ == "__main__":
     main()

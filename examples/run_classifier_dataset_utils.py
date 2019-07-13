@@ -425,11 +425,17 @@ class WnliProcessor(DataProcessor):
         return examples
 
 
+def get_label_map(label_list):
+    """Return a map of label names with their corresponding IDs."""
+    label_map = {label: i for i, label in enumerate(label_list)}
+    return label_map
+
+
 def convert_examples_to_features(examples, label_list, max_seq_length,
                                  tokenizer, output_mode):
     """Loads a data file into a list of `InputBatch`s."""
 
-    label_map = {label : i for i, label in enumerate(label_list)}
+    label_map = get_label_map(label_list)
 
     features = []
     for (ex_index, example) in enumerate(examples):
@@ -534,13 +540,13 @@ def _truncate_seq_pair(tokens_a, tokens_b, max_length):
             tokens_b.pop()
 
 
-def simple_accuracy(preds, labels):
-    return (preds == labels).mean()
+def simple_accuracy(y_pred, y_true):
+    return (y_pred == y_true).mean()
 
 
-def acc_and_f1(preds, labels):
-    acc = simple_accuracy(preds, labels)
-    f1 = f1_score(y_true=labels, y_pred=preds)
+def acc_and_f1(y_pred, y_true):
+    acc = simple_accuracy(y_pred, y_true)
+    f1 = f1_score(y_true=y_true, y_pred=y_pred)
     return {
         "acc": acc,
         "f1": f1,
@@ -548,13 +554,16 @@ def acc_and_f1(preds, labels):
     }
 
 
-def acc_f1_and_clf_rep(preds, labels, multiclass=False):
-    acc = simple_accuracy(preds, labels)
+def acc_f1_and_clf_rep(y_pred, y_true, labels=None, target_names=None, multiclass=False):
+    acc = simple_accuracy(y_pred, y_true)
     if multiclass:
-        f1 = f1_score(y_true=labels, y_pred=preds, average="macro")
+        f1 = f1_score(y_true, y_pred, average="macro")
     else:
-        f1 = f1_score(y_true=labels, y_pred=preds)
-    clf_rep = classification_report(y_true=labels, y_pred=preds)
+        f1 = f1_score(y_true, y_pred)
+    if labels is not None and target_names is not None:
+        clf_rep = classification_report(y_true, y_pred, labels, target_names)
+    else:
+        clf_rep = classification_report(y_true, y_pred)
     return {
         "acc": acc,
         "f1": f1,
@@ -563,9 +572,9 @@ def acc_f1_and_clf_rep(preds, labels, multiclass=False):
     }
 
 
-def pearson_and_spearman(preds, labels):
-    pearson_corr = pearsonr(preds, labels)[0]
-    spearman_corr = spearmanr(preds, labels)[0]
+def pearson_and_spearman(y_true, y_pred):
+    pearson_corr = pearsonr(y_true, y_pred)[0]
+    spearman_corr = spearmanr(y_true, y_pred)[0]
     return {
         "pearson": pearson_corr,
         "spearmanr": spearman_corr,
@@ -573,30 +582,30 @@ def pearson_and_spearman(preds, labels):
     }
 
 
-def compute_metrics(task_name, preds, labels):
-    assert len(preds) == len(labels)
+def compute_metrics(task_name, y_pred, y_true, labels=None, target_names=None):
+    assert len(y_pred) == len(y_true)
     if task_name == "cola":
-        return {"mcc": matthews_corrcoef(labels, preds)}
+        return {"mcc": matthews_corrcoef(y_true, y_pred)}
     elif task_name == "sst-2":
-        return {"acc": simple_accuracy(preds, labels)}
+        return {"acc": simple_accuracy(y_pred, y_true)}
     elif task_name == "mrpc":
-        return acc_and_f1(preds, labels)
+        return acc_and_f1(y_pred, y_true)
     elif task_name == "sts-b":
-        return pearson_and_spearman(preds, labels)
+        return pearson_and_spearman(y_pred, y_true)
     elif task_name == "qqp":
-        return acc_and_f1(preds, labels)
+        return acc_and_f1(y_pred, y_true)
     elif task_name == "mnli":
-        return {"acc": simple_accuracy(preds, labels)}
+        return {"acc": simple_accuracy(y_pred, y_true)}
     elif task_name == "mnli-mm":
-        return {"acc": simple_accuracy(preds, labels)}
+        return {"acc": simple_accuracy(y_pred, y_true)}
     elif task_name == "qnli":
-        return {"acc": simple_accuracy(preds, labels)}
+        return {"acc": simple_accuracy(y_pred, y_true)}
     elif task_name == "rte":
-        return {"acc": simple_accuracy(preds, labels)}
+        return {"acc": simple_accuracy(y_pred, y_true)}
     elif task_name == "wnli":
-        return {"acc": simple_accuracy(preds, labels)}
+        return {"acc": simple_accuracy(y_pred, y_true)}
     elif task_name == "tlhd":
-        return acc_f1_and_clf_rep(preds, labels, True)
+        return acc_f1_and_clf_rep(y_pred, y_true, labels, target_names, True)
     else:
         raise KeyError(task_name)
 
