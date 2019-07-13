@@ -548,9 +548,12 @@ def acc_and_f1(preds, labels):
     }
 
 
-def acc_f1_and_clf_rep(preds, labels):
+def acc_f1_and_clf_rep(preds, labels, multiclass=False):
     acc = simple_accuracy(preds, labels)
-    f1 = f1_score(y_true=labels, y_pred=preds)
+    if multiclass:
+        f1 = f1_score(y_true=labels, y_pred=preds, average="macro")
+    else:
+        f1 = f1_score(y_true=labels, y_pred=preds)
     clf_rep = classification_report(y_true=labels, y_pred=preds)
     return {
         "acc": acc,
@@ -593,7 +596,7 @@ def compute_metrics(task_name, preds, labels):
     elif task_name == "wnli":
         return {"acc": simple_accuracy(preds, labels)}
     elif task_name == "tlhd":
-        return acc_f1_and_clf_rep(preds, labels)
+        return acc_f1_and_clf_rep(preds, labels, True)
     else:
         raise KeyError(task_name)
 
