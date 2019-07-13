@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
 
-export WORK_DIR=/tlhd/models/bert01
-export MODEL_DIR=/tlhd/models/bert01/output
-export CODE_DIR=~/git-reps/pytorch-pretrained-BERT
-
-#export WORK_DIR=/home/aallhorn
-#export MODEL_DIR=/home/aallhorn/output
-#export CODE_DIR=/home/aallhorn/code/pytorch-pretrained-BERT
+if [ "$HOSTNAME" = "tripl3a-t440s" ]; then
+    export WORK_DIR=/tlhd/models/bert01
+    export MODEL_DIR=/tlhd/models/bert01/output
+    export CODE_DIR=~/git-reps/pytorch-pretrained-BERT
+else
+    export WORK_DIR=/home/aallhorn
+    export MODEL_DIR=/home/aallhorn/output
+    export CODE_DIR=/home/aallhorn/code/pytorch-pretrained-BERT
+fi
 
 export TASK_NAME=TLHD
 
