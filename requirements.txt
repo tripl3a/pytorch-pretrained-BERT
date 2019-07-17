@@ -8,6 +8,8 @@ boto3
 requests
 # For OpenAI GPT
 regex
+# For XLNet
+sentencepiece
 
 # Additions to run_classifier.sh
 #pip install --editable . # in repo root
