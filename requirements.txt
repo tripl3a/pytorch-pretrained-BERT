@@ -12,10 +12,13 @@ regex
 sentencepiece
 
 # Additions to run_classifier.sh
-#pip install --editable . # in repo root
 tensorboardX
 scipy
 sklearn
 
 # TLHD additions
 pandas
+
+# Install PyTorch-Transformers from source
+# Clone the repository and run:
+# `pip install --editable .`
