@@ -1,10 +1,19 @@
 #!/usr/bin/env bash
 
-export WORK_DIR=/home/aallhorn
+if [ "$HOSTNAME" = "tripl3a-t440s" ]; then
+    export WORK_DIR=/tlhd/models/bert02
+    export MODEL_DIR=/tlhd/models/bert02/output
+    export CODE_DIR=~/git-reps/pytorch-transformers
+else
+    export WORK_DIR=/home/aallhorn
+    export MODEL_DIR=/home/aallhorn/output
+    export CODE_DIR=/home/aallhorn/code/pytorch-transformers
+fi
+
 export TASK_NAME=TLHD
 
-cd $WORK_DIR/code/pytorch-pretrained-BERT/hate_detector &&
-python ../examples/run_classifier.py \
+cd $CODE_DIR/hate_detector &&
+python run_classifier.py \
   --task_name $TASK_NAME \
   --data_dir $WORK_DIR/data \
   --output_dir $WORK_DIR/output \
