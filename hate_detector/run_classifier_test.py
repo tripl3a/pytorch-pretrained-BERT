@@ -34,10 +34,10 @@ from torch.nn import CrossEntropyLoss, MSELoss
 
 from tensorboardX import SummaryWriter
 
-from pytorch_pretrained_bert.file_utils import WEIGHTS_NAME, CONFIG_NAME
-from pytorch_pretrained_bert.modeling import BertForSequenceClassification
-from pytorch_pretrained_bert.tokenization import BertTokenizer
-from pytorch_pretrained_bert.optimization import BertAdam, WarmupLinearSchedule
+from pytorch_transformers.file_utils import WEIGHTS_NAME, CONFIG_NAME
+from pytorch_transformers.modeling import BertForSequenceClassification
+from pytorch_transformers.tokenization import BertTokenizer
+from pytorch_transformers.optimization import BertAdam, WarmupLinearSchedule
 
 from run_classifier_dataset_utils import processors, output_modes, convert_examples_to_features, compute_metrics, \
     get_label_map

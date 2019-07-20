@@ -13,14 +13,20 @@ fi
 export TASK_NAME=TLHD
 
 cd $CODE_DIR/hate_detector &&
-python run_classifier.py \
+python ../examples/run_glue.py \
   --task_name $TASK_NAME \
   --data_dir $WORK_DIR/data \
   --output_dir $WORK_DIR/output \
   --do_train \
   --do_eval \
-  --bert_model bert-base-multilingual-cased \
+  --model_type bert \
+  --model_name_or_path bert-base-german-cased \
   --max_seq_length 128 \
-  --train_batch_size 32 \
+  --per_gpu_train_batch_size=32 \
+  --per_gpu_eval_batch_size=32 \
   --learning_rate 2e-5 \
-  --num_train_epochs 3.0
+  --num_train_epochs 3 \
+  --save_steps 1000 \
+  --logging_steps 1000 \
+  --fp16
+
